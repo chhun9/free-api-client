@@ -1,8 +1,8 @@
 [package]
 name = "free-api-client"
-version = "0.1.0"
+version = "1.0.0"
 description = "A Tauri App"
-authors = ["you"]
+authors = ["chhun9"]
 edition = "2021"
 
 [build-dependencies]
@@ -21,3 +21,4 @@ log = "0.4.21"
 strum = "0.26.3"
 strum_macros = "0.26.4"
 uuid = { version = "1", features = ["v4"] }
+dirs = "4.0"

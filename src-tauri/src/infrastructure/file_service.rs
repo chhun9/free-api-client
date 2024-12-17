@@ -4,7 +4,8 @@ use std::path::PathBuf;
 use log::debug;
 
 fn get_file_path() -> PathBuf {
-    std::env::current_dir().unwrap().join("dist")
+    let home_dir = dirs::home_dir().expect("Failed to get home directory");
+    home_dir.join("dist")
 }
 
 pub fn get_file_read() -> PathBuf {
