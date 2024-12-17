@@ -1,6 +1,7 @@
 use crate::domain::AppData;
 use std::fs;
 use std::path::PathBuf;
+use log::debug;
 
 fn get_file_path() -> PathBuf {
     std::env::current_dir().unwrap().join("dist")
@@ -10,7 +11,7 @@ pub fn get_file_read() -> PathBuf {
     get_file_path().join("api.json")
 }
 
-pub fn ensure_file_with_data() -> Result<(), String> {
+pub fn ensure_file_with_data() -> Result<PathBuf, String> {
     let app_dir = get_file_path();
 
     if !app_dir.exists() {
@@ -18,12 +19,13 @@ pub fn ensure_file_with_data() -> Result<(), String> {
     }
 
     let file_path = get_file_read();
+
     if !file_path.exists() {
         let empty_data = AppData::new();
-        write_app_data_file(empty_data)?;
+        let _ = write_app_data_file(empty_data)?;
     }
 
-    Ok(())
+    Ok(file_path)
 }
 
 pub fn read_file_content() -> Result<AppData, String> {

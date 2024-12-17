@@ -2,8 +2,8 @@
   <div class="api-client">
     <Sidebar @selectApi="handleApiFromSidebar" @selectCollection="handleCollectionFromSidebar" />
 
-    <RequestEditor :style="{ width: editorWidth + '%' }" :selectedApi="selectedApi"
-      :selectedCollection="selectedCollection" @request="handleRequest" />
+    <RequestEditor :style="{ width: editorWidth + '%' }" :selectedApi="selectedApi" :isLoading="isLoading"
+      :selectedCollection="selectedCollection" @request="sendRequest" />
 
     <div class="request-resizer" @mousedown="startResize" />
 
@@ -30,10 +30,6 @@ const startWidth = ref(0);
 const isEmptyString = str => {
   return !str || str.trim() === '';
 }
-
-const handleRequest = async (request) => {
-  await sendRequest(request);
-};
 
 const handleApiFromSidebar = (selectedApiFromSidebar) => {
   if (!selectedApiFromSidebar) return;

@@ -1,7 +1,8 @@
 <template>
     <div>
-        <div v-for="(api, index) in apis" :key="index" :class="['item-api', { highlighted: selectedApi.id === api.id }]"
-            @click="$emit('selectApi', api)" @contextmenu.stop="$emit('showContextMenu', $event, api)">
+        <div v-for="(api, index) in apis" :key="index"
+            :class="['item-api', { highlighted: selectedApi?.id === api.id }]" @click="$emit('selectApi', api)"
+            @contextmenu.stop="$emit('showContextMenu', $event, api)">
             <div class="item-api-method" :style="{ backgroundColor: getMethodColor(api.method) }">
                 {{ api.method }}
             </div>

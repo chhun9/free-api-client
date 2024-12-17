@@ -15,4 +15,11 @@ impl Collection {
     pub fn id(&self) -> &str {
         &self.id
     }
+    pub fn new_id(&mut self) -> String {
+        self.id = Uuid::new_v4().to_string();
+        self.id.clone()
+    }
+    pub fn new_name(&mut self, name: String) {
+        self.name = name;
+    }
 }

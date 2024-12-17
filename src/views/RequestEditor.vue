@@ -6,7 +6,7 @@
             <h5 v-if="selectedCollection"> collection name : {{ selectedCollection?.name }}</h5>
         </div>
 
-        <Methods :url="url" :method="method" @selectMethod="selectMethod" @analyzeUrl="analyzeUrl"
+        <Methods :url="url" :method="method" :isLoading="isLoading" @selectMethod="selectMethod" @analyzeUrl="analyzeUrl"
             @sendRequest="sendRequest" />
 
         <div class="request-settings">
@@ -42,6 +42,10 @@ const props = defineProps({
         type: Object,
         default: null,
     },
+    isLoading: {
+        type: Boolean,
+        default: false
+    }
 });
 
 // Request State

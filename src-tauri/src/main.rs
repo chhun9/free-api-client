@@ -15,8 +15,7 @@ mod interfaces;
 const LOG_LEVEL: LevelFilter = LevelFilter::Debug;
 
 fn main() {
-    interfaces::file_command::ensure_data_file;
-
+    interfaces::file_command::ensure_data_file();
     tauri::Builder
         ::default()
         .setup(|app| {
@@ -36,6 +35,10 @@ fn main() {
                 interfaces::file_command::read_data,
                 interfaces::api_command::save_api,
                 interfaces::api_command::delete_data,
+                interfaces::api_command::save_new_collection,
+                interfaces::api_command::save_new_api,
+                interfaces::api_command::rename_data,
+                interfaces::api_command::duplicate_data,
                 interfaces::request_command::cancel_request,
                 interfaces::request_command::send_request
             ]

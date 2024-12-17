@@ -2,8 +2,9 @@ use reqwest::Client;
 use tokio_util::sync::CancellationToken;
 use std::sync::Arc;
 use tokio::sync::Mutex as TokioMutex;
+use log::debug;
 
-use crate::domain::{ AppState, Header, HttpMethod };
+use crate::domain::{ AppState, Header, HttpMethod, HttpResponse };
 
 pub async fn send_request(
     state: Arc<TokioMutex<AppState>>,
@@ -11,17 +12,14 @@ pub async fn send_request(
     url: String,
     headers: Vec<Header>,
     body: Option<String>
-) -> Result<serde_json::Value, String> {
-    let mut state = state.lock().await;
-
-    if let Some(token) = &state.cancellation_token {
-        token.cancel();
-    }
-
+) -> Result<HttpResponse, String> {
     let token = CancellationToken::new();
-    state.cancellation_token = Some(token.clone());
-
     let token_clone = token.clone();
+
+    {
+        let mut state = state.lock().await;
+        state.cancellation_token = Some(token.clone());
+    }
 
     let handle = tokio::spawn(async move {
         let client = Client::new();
@@ -50,13 +48,7 @@ pub async fn send_request(
             _ = token_clone.cancelled() => return Err("Request cancelled".to_string()),
         };
 
-        if response.status().is_success() {
-            response
-                .json::<serde_json::Value>().await
-                .map_err(|e| format!("Failed to parse response: {}", e))
-        } else {
-            Err(format!("HTTP error: {}", response.status()))
-        }
+        Ok(HttpResponse::from_response(response).await)
     });
 
     let result =
@@ -65,7 +57,11 @@ pub async fn send_request(
         _ = token.cancelled() => Err("Request cancelled".to_string()),
     };
 
-    state.cancellation_token = None;
+    {
+        let mut state = state.lock().await;
+        state.cancellation_token = None;
+    }
+
     result
 }
 

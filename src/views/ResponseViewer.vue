@@ -5,8 +5,6 @@ import 'vue-json-pretty/lib/styles.css';
 
 const props = defineProps({
     response: [String, Object],
-    statusCode: Number,
-    headers: Object,
     isLoading: Boolean,
 });
 const emit = defineEmits(['cancel']);
@@ -15,11 +13,11 @@ const tabs = ref(['Body', 'Headers']);
 const activeTab = ref('Body');
 
 const statusColor = computed(() => {
-    if (!props.statusCode) return '';
-    if (props.statusCode >= 200 && props.statusCode < 300) return 'green';
-    if (props.statusCode >= 300 && props.statusCode < 400) return 'blue';
-    if (props.statusCode >= 400 && props.statusCode < 500) return 'orange';
-    if (props.statusCode >= 500) return 'red';
+    if (!props.response?.status_code) return '';
+    if (props.response?.status_code >= 200 && props.response?.status_code < 300) return 'green';
+    if (props.response?.status_code >= 300 && props.response?.status_code < 400) return 'blue';
+    if (props.response?.status_code >= 400 && props.response?.status_code < 500) return 'orange';
+    if (props.response?.status_code >= 500) return 'red';
     return '';
 });
 
@@ -27,7 +25,7 @@ const copyStatus = ref('');
 
 const copyToClipboard = async () => {
     try {
-        const textToCopy = typeof props.response === 'object' ? JSON.stringify(props.response, null, 2) : props.response;
+        const textToCopy = typeof props.response?.body === 'object' ? JSON.stringify(props.response?.body, null, 2) : props.response?.body;
         await navigator.clipboard.writeText(textToCopy);
         copyStatus.value = 'Copied to clipboard!';
         setTimeout(() => {
@@ -44,7 +42,13 @@ const copyToClipboard = async () => {
 
 <template>
     <div class="response-viewer">
-        <h2>Response</h2>
+        <h2>
+            <p>Response</p>
+            <p v-if="response?.status_code" :style="{ backgroundColor: statusColor, color: 'white' }"
+                class="status-code">
+                Status Code: {{ response?.status_code }}
+            </p>
+        </h2>
         <div v-if="isLoading" class="loading-overlay">
             <p>Loading...</p>
             <button @click="emit('cancel')">Cancel</button>
@@ -62,16 +66,13 @@ const copyToClipboard = async () => {
                         {{ copyStatus ? copyStatus : 'Copy to Clipboard' }}
                     </button>
 
-                    <VueJsonPretty :data="response" showIcon showLineNumber showLine showLength showDoubleQuotes
-                        showKeyValueSpace collapseOnClickBrackets virtual :height="600" />
+                    <VueJsonPretty v-if="response?.body" :data="response?.body" showIcon showLineNumber showLine
+                        showLength showDoubleQuotes showKeyValueSpace collapseOnClickBrackets virtual :height="600" />
                 </div>
                 <div v-if="activeTab === 'Headers'" class="tab-headers">
-                    <pre>{{ headers }}</pre>
+                    <pre>{{ response?.headers }}</pre>
                 </div>
             </div>
-            <p v-if="statusCode" :style="{ color: statusColor }" class="status-code">
-                Status Code: {{ statusCode }}
-            </p>
         </div>
     </div>
 </template>
@@ -91,8 +92,13 @@ const copyToClipboard = async () => {
 }
 
 h2 {
+    display: flex;
     margin: 0 0 0px;
     font-size: 24px;
+}
+
+h2 p {
+    margin: 0 0 0px;
 }
 
 .tabs {
@@ -148,9 +154,8 @@ h2 {
 }
 
 .status-code {
-    margin-top: 1rem;
-    font-weight: bold;
-    font-size: 1.1rem;
+    margin-left: auto;
+    text-align: right;
 }
 
 .loading-overlay {

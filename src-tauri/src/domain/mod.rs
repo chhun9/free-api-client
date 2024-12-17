@@ -6,6 +6,7 @@ pub use models::Header;
 pub use models::AppData;
 pub use models::AppState;
 pub use models::Collection;
+pub use models::HttpResponse;
 
 pub use enums::HttpHeader;
 pub use enums::HttpMethod;

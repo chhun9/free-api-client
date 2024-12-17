@@ -7,14 +7,14 @@
         </select>
         <input v-model="inputUrl" type="text" class="url-input" placeholder="Enter API URL"
             @blur="$emit('analyzeUrl', inputUrl)" />
-        <button @click="$emit('sendRequest')" class="send-btn">Send</button>
+        <button @click="$emit('sendRequest')" class="send-btn" :disabled="isLoading">Send</button>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useHttpUtils } from '@/composables/useHttpUtils';
-const props = defineProps(['url', 'method']);
+const props = defineProps(['url', 'method', 'isLoading']);
 const emit = defineEmits();
 
 const methods = ref([]);

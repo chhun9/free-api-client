@@ -1,18 +1,18 @@
-use crate::infrastructure::file_service;
+use super::*;
 use crate::domain::models::AppData;
-use tauri::command;
+use std::path::PathBuf;
 
-#[command]
-pub fn ensure_data_file() -> Result<(), String> {
+#[tauri::command]
+pub fn ensure_data_file() -> Result<PathBuf, String> {
     file_service::ensure_file_with_data()
 }
 
-#[command]
+#[tauri::command]
 pub fn read_data() -> Result<AppData, String> {
     file_service::read_file_content()
 }
 
-#[command]
+#[tauri::command]
 pub fn save_data(data: String) -> Result<(), String> {
     let app_data: AppData = serde_json
         ::from_str(&data)
